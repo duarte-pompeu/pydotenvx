@@ -48,7 +48,7 @@ format: $(INSTALL_STAMP) ## Formats the code and sorts imports consistently
 
 .PHONY: lint
 lint: $(INSTALL_STAMP) ## Analyzes the code and reports inconsistencies
-	PYTHONPATH=. $(CMD) flake8 $(SOURCE) $(EXTRA) --extend-ignore=E501
+	PYTHONPATH=. $(CMD) ruff check $(ALL_CODE)
 
 .PHONY: type
 type: $(INSTALL_STAMP) ## checks types in code

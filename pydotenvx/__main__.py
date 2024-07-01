@@ -10,22 +10,9 @@ if __name__ == "__main__":
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    dotenv_args: list[str] = []
-    subprocess_args: list[str] = []
+    dotenv_command = sys.argv[1]
+    cli_args = sys.argv[2:]
 
-    arg_reference = dotenv_args
-    for arg in sys.argv[1:]:
-        if arg == "--":
-            arg_reference = subprocess_args
-            continue
-        arg_reference.append(arg)
-
-    cmd, args = dotenv_args[0], dotenv_args[1:]
-
-    logging.debug(cmd)
-    logging.debug(args)
-    logging.debug(subprocess_args)
-
-    CmdClass = find_command_class(cmd)
-    command = CmdClass.create_from_cli_params(args)
+    CmdClass = find_command_class(dotenv_command)
+    command = CmdClass.create_from_cli_params(cli_args)
     command.run()
