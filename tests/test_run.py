@@ -1,21 +1,10 @@
-import subprocess
-
 import pytest
+
+from pydotenvx.__main__ import main
 
 
 def test_hello_no_file():
-    result = subprocess.run(
-        [
-            "python",
-            "-m",
-            "pydotenvx",
-            "run",
-            "--",
-            "python",
-            "tests/programs/hello_world.py",
-        ]
-    )
-    assert result.returncode == 0
+    main("run", ["--", "python", "tests/programs/hello_world.py"])
 
 
 @pytest.mark.parametrize(
@@ -60,9 +49,8 @@ def test_hello_no_file():
     ],
 )
 def test_hello_some_files(dotenvs_names):
-    before = ["python", "-m", "pydotenvx", "run", "-f"]
-    after = ["--", "python", "tests/programs/hello_world.py"]
+    before = ["-f"]
     dotenvs = [f"tests/dotenvs/{x}.env" for x in dotenvs_names]
-    commands = before + dotenvs + after
-    result = subprocess.run(commands)
-    assert result.returncode == 0
+    after = ["--", "python", "tests/programs/hello_world.py"]
+    args = before + dotenvs + after
+    main("run", args)
