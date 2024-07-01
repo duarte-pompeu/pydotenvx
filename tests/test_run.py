@@ -3,8 +3,10 @@ import pytest
 from pydotenvx.__main__ import main
 
 
-def test_hello_no_file():
+def test_hello_no_file(capfd: pytest.CaptureFixture):
     main("run", ["--", "python", "tests/programs/hello_world.py"])
+    output = capfd.readouterr()
+    assert output.out == "Hello, world!\n"
 
 
 @pytest.mark.parametrize(
@@ -48,9 +50,13 @@ def test_hello_no_file():
         [3, 3, 3],
     ],
 )
-def test_hello_some_files(dotenvs_names):
+def test_hello_some_files(capfd: pytest.CaptureFixture, dotenvs_names: list[int]):
     before = ["-f"]
     dotenvs = [f"tests/dotenvs/{x}.env" for x in dotenvs_names]
     after = ["--", "python", "tests/programs/hello_world.py"]
     args = before + dotenvs + after
+
     main("run", args)
+
+    output = capfd.readouterr()
+    assert output.out == "Hello, world!\n"
