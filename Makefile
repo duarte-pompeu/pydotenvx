@@ -52,7 +52,7 @@ lint: $(INSTALL_STAMP) ## Analyzes the code and reports inconsistencies
 
 .PHONY: type
 type: $(INSTALL_STAMP) ## checks types in code
-	$(CMD) mypy $(ALL_CODE)
+	$(CMD) mypy $(SOURCE)
 
 .PHONY: test
 test: $(INSTALL_STAMP) ## run tests

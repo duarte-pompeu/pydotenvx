@@ -85,12 +85,15 @@ class RunCommand(Command):
         for arg in args[i + 2 :]:
             subprocess_args.append(arg)
 
-        dotenv_arg_0 = dotenv_args[0]
-        if dotenv_arg_0 != "-f":
-            raise ValueError(
-                f"Expected 1st parameter to be the '-f' flag, but got: {dotenv_arg_0}"
-            )
-        dotenv_paths = dotenv_args[1:]
+        if len(dotenv_args) == 0:
+            dotenv_paths = []
+        else:
+            dotenv_arg_0 = dotenv_args[0]
+            if dotenv_arg_0 != "-f":
+                raise ValueError(
+                    f"Expected 1st parameter to be the '-f' flag, but got: {dotenv_arg_0}"
+                )
+            dotenv_paths = dotenv_args[1:]
 
         return RunCommand(subprocess, subprocess_args, dotenv_paths)
 

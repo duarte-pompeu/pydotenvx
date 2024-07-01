@@ -3,6 +3,13 @@ import sys
 
 from pydotenvx.commands import find_command_class
 
+
+def main(*args):
+    CmdClass = find_command_class(dotenv_command)
+    command = CmdClass.create_from_cli_params(cli_args)
+    command.run()
+
+
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.DEBUG,
@@ -12,7 +19,4 @@ if __name__ == "__main__":
 
     dotenv_command = sys.argv[1]
     cli_args = sys.argv[2:]
-
-    CmdClass = find_command_class(dotenv_command)
-    command = CmdClass.create_from_cli_params(cli_args)
-    command.run()
+    main(cli_args)
