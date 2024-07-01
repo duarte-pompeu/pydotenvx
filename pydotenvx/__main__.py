@@ -4,7 +4,10 @@ import sys
 from pydotenvx.commands import find_command_class
 
 
-def main(command, args):
+def main(command, args: list[str] | None = None):
+    if args is None:
+        args = []
+
     CmdClass = find_command_class(command)
     command = CmdClass.create_from_cli_params(args)
     command.run()

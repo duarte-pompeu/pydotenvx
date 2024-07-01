@@ -19,7 +19,7 @@ def find_command_class(cmd_name: str) -> Type[Command]:
 
 class Command:
     @staticmethod
-    def create_from_cli_params(args: list[str]) -> Command:
+    def create_from_cli_params(args: list[str] | None = None) -> Command:
         raise NotImplementedError()
 
     def run(self) -> int | Any:
@@ -31,25 +31,29 @@ class ListCommand(Command):
         self.dotenv_paths = dotenv_paths
 
     @staticmethod
-    def create_from_cli_params(args: list[str]) -> ListCommand:
+    def create_from_cli_params(args: list[str] | None = None) -> ListCommand:
+        if args is None:
+            args = []
+
         if len(args) == 0:
-            raise ValueError("No parameters for list command.")
+            dotenv_paths = []
+        else:
+            arg_0 = args[0]
+            if arg_0 != "-f":
+                raise ValueError(
+                    f"Expected 1st parameter to be the '-f' flag, but got: {arg_0}"
+                )
+            dotenv_paths = args[1:]
 
-        arg_0 = args[0]
-        if arg_0 != "-f":
-            raise ValueError(
-                f"Expected 1st parameter to be the '-f' flag, but got: {arg_0}"
-            )
-
-        return ListCommand(dotenv_paths=args[1:])
+        return ListCommand(dotenv_paths=dotenv_paths)
 
     def run(self) -> int | Any:
         vars = {}
         for dotenv_path in self.dotenv_paths:
             vars.update(_load_dotenv_file(dotenv_path))
 
-        for k, v in vars.items():
-            print(f"{k}={v}")
+        for k, v in sorted(vars.items()):
+            print(f'{k}="{v}"')
 
         return 0
 
@@ -64,7 +68,10 @@ class RunCommand(Command):
         self.dotenv_paths = dotenv_paths
 
     @staticmethod
-    def create_from_cli_params(args: list[str]) -> RunCommand:
+    def create_from_cli_params(args: list[str] | None = None) -> RunCommand:
+        if args is None:
+            args = []
+
         dotenv_args: list[str] = []
         subprocess = ""
         subprocess_args: list[str] = []
