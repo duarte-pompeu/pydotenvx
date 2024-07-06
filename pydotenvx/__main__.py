@@ -18,14 +18,17 @@ def main(command, args: list[str] | None = None) -> int:
         return -1
 
 
+def script():
+    dotenv_command = sys.argv[1]
+    cli_args = sys.argv[2:]
+    code = main(dotenv_command, cli_args)
+    sys.exit(code)
+
+
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.DEBUG,
         format="%(asctime)s %(levelname)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
-
-    dotenv_command = sys.argv[1]
-    cli_args = sys.argv[2:]
-    code = main(dotenv_command, cli_args)
-    sys.exit(code)
+    script()

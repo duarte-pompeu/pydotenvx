@@ -1,6 +1,5 @@
 import re
 
-
 # TODO: allow to load multiple paths from this
 # TODO: validate all paths are ok
 def _load_dotenv_file(path: str) -> dict:
