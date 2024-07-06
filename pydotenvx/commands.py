@@ -4,6 +4,8 @@ import os
 from subprocess import Popen
 from typing import Any, Type
 
+from .parsing import _load_dotenv_file
+
 
 def find_command_class(cmd_name: str) -> Type[Command]:
     try:
@@ -117,22 +119,6 @@ class RunCommand(Command):
         _, _ = p.communicate()
 
         return p.returncode
-
-
-# TODO: allow to load multiple paths from this
-# TODO: validate all paths are ok
-def _load_dotenv_file(path: str) -> dict:
-    vars = {}
-    with open(path) as f:
-        for line in f.readlines():
-            line = line.strip()
-            if not line:
-                continue
-
-            key, value = line.split("=")
-            vars[key] = value
-
-    return vars
 
 
 # TODO: use factory and decorators
