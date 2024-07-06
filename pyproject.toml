@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pydotenvx"
-version = "0.1.1-rc1"
+version = "0.1.1"
 description = "A tool inspired by [dotenvx](https://dotenvx.com/), but easier to install in python projects."
 authors = ["duarte-pompeu <duarte-pompeu@users.noreply.github.com>"]
 
