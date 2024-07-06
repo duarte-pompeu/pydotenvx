@@ -60,7 +60,7 @@ Not to trash on `python-dotenv`, but I've seen multiple problems from invoking i
 These problems can be mitigated with careful planning, 
 but I believe that the normal usage of `dotenvx` or `pydotenvx` will naturally avoid some of these issues.
 
-I still thank the developers of `python-dotenv` for creating such an useful tool.
+I still thank the developers of `python-dotenv` for creating a useful tool that I used in many projects.
 
 ## Encryption and other features
 
