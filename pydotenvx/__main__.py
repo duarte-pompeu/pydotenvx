@@ -4,13 +4,18 @@ import sys
 from pydotenvx.commands import find_command_class
 
 
-def main(command, args: list[str] | None = None):
+def main(command, args: list[str] | None = None) -> int:
     if args is None:
         args = []
 
-    CmdClass = find_command_class(command)
-    command = CmdClass.create_from_cli_params(args)
-    command.run()
+    try:
+        CmdClass = find_command_class(command)
+        command = CmdClass.create_from_cli_params(args)
+        command.run()
+        return 0
+    except Exception as err:
+        logging.error(err)
+        return -1
 
 
 if __name__ == "__main__":
@@ -22,4 +27,5 @@ if __name__ == "__main__":
 
     dotenv_command = sys.argv[1]
     cli_args = sys.argv[2:]
-    main(dotenv_command, cli_args)
+    code = main(dotenv_command, cli_args)
+    sys.exit(code)
