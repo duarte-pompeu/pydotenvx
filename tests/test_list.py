@@ -12,9 +12,9 @@ def test_list_no_file(capfd: pytest.CaptureFixture):
 @pytest.mark.parametrize(
     "path, expected_output",
     [
-        pytest.param("tests/dotenvs/1.env", 'a="1"\nb="2"\nc="3"\n', id="1.env"),
-        pytest.param("tests/dotenvs/2.env", 'd="44"\n', id="2.env"),
-        pytest.param("tests/dotenvs/3.env", 'a="111"\n', id="3.env"),
+        pytest.param("tests/dotenvs/valid/1.env", 'a="1"\nb="2"\nc="3"\n', id="1.env"),
+        pytest.param("tests/dotenvs/valid/2.env", 'd="44"\n', id="2.env"),
+        pytest.param("tests/dotenvs/valid/3.env", 'a="111"\n', id="3.env"),
     ],
 )
 def test_list_one_file(capfd: pytest.CaptureFixture, path, expected_output):
@@ -35,7 +35,7 @@ def test_list_one_file(capfd: pytest.CaptureFixture, path, expected_output):
     ],
 )
 def test_list_multi_files(capfd: pytest.CaptureFixture, names, expected_output):
-    paths = [f"tests/dotenvs/{n}.env" for n in names]
+    paths = [f"tests/dotenvs/valid/{n}.env" for n in names]
     main("list", ["-f"] + paths)
     output = capfd.readouterr()
     assert output.out == expected_output

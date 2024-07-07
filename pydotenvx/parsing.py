@@ -1,5 +1,6 @@
 import re
 
+
 # TODO: allow to load multiple paths from this
 # TODO: validate all paths are ok
 def _load_dotenv_file(path: str) -> dict:
@@ -7,12 +8,15 @@ def _load_dotenv_file(path: str) -> dict:
     parse_errors = {}
     with open(path) as f:
         for i, line in enumerate(f.readlines(), start=1):
+            # ignore comments
+            line = line.split("#")[0]
+
             line = line.strip()
             if not line:
                 continue
 
-            # TODO: assure only one var per file
-            pattern = r'^\s*([^"]+)\s*=\s*"([^"]+)"\s*$'
+            # TODO: assure only one var per line
+            pattern = r'^\s*([^"\s]+)\s*=\s*"([^"]+)"\s*$'
             matches = re.findall(pattern, line)
 
             if len(matches) == 0:
@@ -26,7 +30,7 @@ def _load_dotenv_file(path: str) -> dict:
 
     if len(parse_errors) > 0:
         msg = "Could not parse the following lines:\n"
-        parse_errors = [f"({i}) {err}" for i, err in parse_errors.items()]
+        parse_errors = [f"({path}:{i}) {err}" for i, err in parse_errors.items()]
         msg += "\n".join(parse_errors)
         raise ValueError(msg)
 
