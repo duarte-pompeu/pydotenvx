@@ -32,18 +32,23 @@ def _load_dotenv_file(path: str) -> dict:
                         mode = "END_OF_KEY"
                         continue
                     if char == "=":
+                        mode = "ASSIGNMENT"
                         break
                     else:
                         key += char
                 elif mode == "END_OF_KEY":
                     if char == "=":
+                        mode = "ASSIGNMENT"
                         break
                     if not char.isspace():
-                        parse_errors[i] = f"Invalid key: {line}"
+                        parse_errors[i] = f"Invalid whitespace in key --> {line}"
                 else:
                     raise ValueError(f"Unknown mode: {mode}")
 
             if mode == "ONLY COMMENT":
+                continue
+            if mode != "ASSIGNMENT":
+                parse_errors[i] = f"Could not process key: --> {line}"
                 continue
 
             mode = ""
@@ -78,6 +83,10 @@ def _load_dotenv_file(path: str) -> dict:
                         break
                 else:
                     raise ValueError(f"Unknown mode: {mode}")
+
+            if mode != "END_OF_VALUE":
+                parse_errors[i] = f"Could not process value: --> {line}"
+                continue
 
             vars[key] = value
 

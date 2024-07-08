@@ -34,6 +34,20 @@ def test_no_file_fail(capfd: pytest.CaptureFixture):
     assert output.out == ""
 
 
+def test_missing_end_quote(capfd: pytest.CaptureFixture):
+    status_code = main("list", ["-f", "tests/dotenvs/invalid/missing_end_quote.env"])
+    output = capfd.readouterr()
+    assert status_code != 0
+    assert output.out == ""
+
+
+def test_missing_start_quote(capfd: pytest.CaptureFixture):
+    status_code = main("list", ["-f", "tests/dotenvs/invalid/missing_start_quote.env"])
+    output = capfd.readouterr()
+    assert status_code != 0
+    assert output.out == ""
+
+
 def test_no_quotes_fail(capfd: pytest.CaptureFixture):
     status_code = main("list", ["-f", "tests/dotenvs/invalid/bad.env"])
     output = capfd.readouterr()
@@ -48,3 +62,10 @@ def test_spacing_ok(capfd: pytest.CaptureFixture):
     assert status_code == 0
     assert output.out == """a="1111"\nb="2222"\nc="3333"\nd="4444"\n"""
 
+
+def test_spacing_on_key_fail(capfd: pytest.CaptureFixture):
+    status_code = main("list", ["-f", "tests/dotenvs/invalid/spacing.env"])
+    output = capfd.readouterr()
+    print(output.err)
+    assert status_code == -1
+    assert output.out == ""
