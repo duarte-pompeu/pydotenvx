@@ -52,7 +52,7 @@ def test_hello_no_file(capfd: pytest.CaptureFixture):
 )
 def test_hello_some_files(capfd: pytest.CaptureFixture, dotenvs_names: list[int]):
     before = ["-f"]
-    dotenvs = [f"tests/dotenvs/{x}.env" for x in dotenvs_names]
+    dotenvs = [f"tests/dotenvs/valid/{x}.env" for x in dotenvs_names]
     after = ["--", "python", "tests/programs/hello_world.py"]
     args = before + dotenvs + after
 
