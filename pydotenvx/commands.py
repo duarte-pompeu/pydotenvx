@@ -55,6 +55,8 @@ class ListCommand(Command):
             vars.update(_load_dotenv_file(dotenv_path))
 
         for k, v in sorted(vars.items()):
+            if '"' in v:
+                v = v.replace('"', '\\"')
             print(f'{k}="{v}"')
 
         return 0

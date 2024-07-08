@@ -1,6 +1,3 @@
-import re
-
-
 # TODO: allow to load multiple paths from this
 # TODO: validate all paths are ok
 def _load_dotenv_file(path: str) -> dict:
@@ -11,21 +8,76 @@ def _load_dotenv_file(path: str) -> dict:
             line = line.strip()
             if not line:
                 continue
-            if "=" not in line:
-                parse_errors[i] = f"Missing assignment: {line}"
-            if '"' not in line:
-                parse_errors[i] = f"Missing quotes: {line}"
 
-            # TODO: assure only one var per line
-            pattern = r'^\s*([^"\s]+)\s*=\s*"([^"]+)"\s*$'
-            matches = re.findall(pattern, line)
+            key = ""
+            value = ""
+            mode = ""
 
-            if len(matches) == 0:
-                parse_errors[i] = f"Could not parse: {line}"
+            parsing_line = (c for c in line)
+
+            for char in parsing_line:
+                if not mode:
+                    if char.isspace():
+                        continue
+                    if char == "#":
+                        mode = "ONLY COMMENT"
+                        break
+                    if char == "=":
+                        parse_errors[i] = f"Missing key: {line}"
+                    else:
+                        mode = "PROCESSING_KEY"
+                        key += char
+                elif mode == "PROCESSING_KEY":
+                    if char.isspace():
+                        mode = "END_OF_KEY"
+                        continue
+                    if char == "=":
+                        break
+                    else:
+                        key += char
+                elif mode == "END_OF_KEY":
+                    if char == "=":
+                        break
+                    if not char.isspace():
+                        parse_errors[i] = f"Invalid key: {line}"
+                else:
+                    raise ValueError(f"Unknown mode: {mode}")
+
+            if mode == "ONLY COMMENT":
                 continue
 
-            for match in matches:
-                key, value = match
+            mode = ""
+            for char in parsing_line:
+                if not mode:
+                    if char.isspace():
+                        continue
+                    if char == '"':
+                        mode = "PROCESSING_VALUE"
+                        continue
+                    else:
+                        parse_errors[i] = (
+                            f"Expected quote after assignment but got something else: {line}"
+                        )
+                elif mode == "PROCESSING_VALUE":
+                    if char == "\\":
+                        mode = "ESCAPED_VALUE"
+                        continue
+                    if char == '"':
+                        mode = "END_OF_VALUE"
+                        continue
+                    else:
+                        value += char
+                elif mode == "ESCAPED_VALUE":
+                    mode = "PROCESSING_VALUE"
+                    value += char
+                    continue
+                elif mode == "END_OF_VALUE":
+                    if char.isspace():
+                        continue
+                    if char == "#":
+                        break
+                else:
+                    raise ValueError(f"Unknown mode: {mode}")
 
             vars[key] = value
 

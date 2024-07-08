@@ -24,7 +24,7 @@ def test_escaped_quotes(capfd: pytest.CaptureFixture):
     output = capfd.readouterr()
     print(output.err)
     assert status_code == 0
-    assert output.out == """a=\nb="2"\nc="\n"""
+    assert output.out == 'a="\\""\nb="\\"2\\""\nc="#3"\n'
 
 
 def test_no_file_fail(capfd: pytest.CaptureFixture):
@@ -47,3 +47,4 @@ def test_spacing_ok(capfd: pytest.CaptureFixture):
     print(output.err)
     assert status_code == 0
     assert output.out == """a="1111"\nb="2222"\nc="3333"\nd="4444"\n"""
+
