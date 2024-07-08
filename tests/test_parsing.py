@@ -19,6 +19,14 @@ def test_empty_ok(capfd: pytest.CaptureFixture):
     assert output.out == ""
 
 
+def test_escaped_quotes(capfd: pytest.CaptureFixture):
+    status_code = main("list", ["-f", "tests/dotenvs/valid/escaping.env"])
+    output = capfd.readouterr()
+    print(output.err)
+    assert status_code == 0
+    assert output.out == """a=\nb="2"\nc="\n"""
+
+
 def test_no_file_fail(capfd: pytest.CaptureFixture):
     status_code = main("list", ["-f", "2d538df1-5380-4f46-b962-38990d7e9b55.env"])
     output = capfd.readouterr()
