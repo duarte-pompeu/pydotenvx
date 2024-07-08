@@ -15,6 +15,8 @@ def _load_dotenv_file(path: str) -> dict:
 
             parsing_line = (c for c in line)
 
+            # parse with a state machine
+            # not the most performant but maybe good enough
             for char in parsing_line:
                 if not mode:
                     if char.isspace():
@@ -23,7 +25,9 @@ def _load_dotenv_file(path: str) -> dict:
                         mode = "ONLY COMMENT"
                         break
                     if char == "=":
-                        parse_errors[i] = f"Missing key: {line}"
+                        mode = "ERROR"
+                        parse_errors[i] = f"Missing key --> {line}"
+                        break
                     else:
                         mode = "PROCESSING_KEY"
                         key += char
@@ -41,14 +45,19 @@ def _load_dotenv_file(path: str) -> dict:
                         mode = "ASSIGNMENT"
                         break
                     if not char.isspace():
+                        mode = "ERROR"
                         parse_errors[i] = f"Invalid whitespace in key --> {line}"
+                        break
                 else:
                     raise ValueError(f"Unknown mode: {mode}")
 
+            if mode == "ERROR":
+                continue
             if mode == "ONLY COMMENT":
                 continue
             if mode != "ASSIGNMENT":
-                parse_errors[i] = f"Could not process key: --> {line}"
+                mode = "ERROR"
+                parse_errors[i] = f"Could not process key --> {line}"
                 continue
 
             mode = ""
@@ -60,9 +69,11 @@ def _load_dotenv_file(path: str) -> dict:
                         mode = "PROCESSING_VALUE"
                         continue
                     else:
+                        mode = "ERROR"
                         parse_errors[i] = (
-                            f"Expected quote after assignment but got something else: {line}"
+                            f"Expected quote after assignment but got something else --> {line}"
                         )
+                        break
                 elif mode == "PROCESSING_VALUE":
                     if char == "\\":
                         mode = "ESCAPED_VALUE"
@@ -83,6 +94,9 @@ def _load_dotenv_file(path: str) -> dict:
                         break
                 else:
                     raise ValueError(f"Unknown mode: {mode}")
+
+            if mode == "ERROR":
+                continue
 
             if mode != "END_OF_VALUE":
                 parse_errors[i] = f"Could not process value: --> {line}"

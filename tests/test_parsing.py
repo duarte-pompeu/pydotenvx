@@ -34,15 +34,29 @@ def test_no_file_fail(capfd: pytest.CaptureFixture):
     assert output.out == ""
 
 
-def test_missing_end_quote(capfd: pytest.CaptureFixture):
+def test_missing_quote_end(capfd: pytest.CaptureFixture):
     status_code = main("list", ["-f", "tests/dotenvs/invalid/missing_end_quote.env"])
     output = capfd.readouterr()
     assert status_code != 0
     assert output.out == ""
 
 
-def test_missing_start_quote(capfd: pytest.CaptureFixture):
+def test_missing_quote_start(capfd: pytest.CaptureFixture):
     status_code = main("list", ["-f", "tests/dotenvs/invalid/missing_start_quote.env"])
+    output = capfd.readouterr()
+    assert status_code != 0
+    assert output.out == ""
+
+
+def test_missing_key(capfd: pytest.CaptureFixture):
+    status_code = main("list", ["-f", "tests/dotenvs/invalid/missing_key.env"])
+    output = capfd.readouterr()
+    assert status_code != 0
+    assert output.out == ""
+
+
+def test_missing_value(capfd: pytest.CaptureFixture):
+    status_code = main("list", ["-f", "tests/dotenvs/invalid/missing_value.env"])
     output = capfd.readouterr()
     assert status_code != 0
     assert output.out == ""
